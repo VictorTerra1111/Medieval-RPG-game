@@ -51,6 +51,7 @@ int main(void){
 	InitWindow(500, 500, "Corpsia");
 
 	Texture2D logo = LoadTexture("assets/sprites/corpsia_logo_black.png");
+	Texture2D logo2= LoadTexture("assets/sprites/corpsia_logo_white.png");
 	Texture2D background_intro = LoadTexture("assets/sprites/Background_intro.png");
 
 	Texture2D b_menu1 = LoadTexture("assets/sprites/background_menu_pic1.png");
@@ -59,16 +60,17 @@ int main(void){
 
 	ToggleFullscreen();
 	SetTargetFPS(60);
-	int sel = 0;
 	bool fade_o = false;
 	bool fade_i = true;
 	double wall_changing = 0.0f;
         int wall_turn = 1;
-
-	while (!WindowShouldClose()) {
+	bool running = true;	
+	int sel2 = 0;
+	int sel = 0;
+	while (!WindowShouldClose() && running) {
         	BeginDrawing();
 		ClearBackground(BLACK);
-		
+			
 		switch (current) { // current state of the game looping
 			case GAME_INTRO: // intro screen with logo and enter only
 				// printf("ENTERED GAME_INTRO STATE\n");
@@ -96,6 +98,9 @@ int main(void){
 
 				}	
 				if(fade_o){
+					
+					DrawTextureEx(logo2, (Vector2){x, y}, 0, SCALE, WHITE);
+					
 					if(!fade_screen(FADE_OUT)) 
 					{
 						current = GAME_MENU;
@@ -105,9 +110,11 @@ int main(void){
 						// printf("\n\nDEBUG game state during fade: GAME_MENU\n\n");
 					}
 				}
+			
 				break;
 
     			case GAME_MENU:
+				
 				const char *start_op = "SAVE FILES";
 				const char *options_op = "OPTIONS";
 				const char *exit_op = "EXIT";
@@ -146,15 +153,26 @@ int main(void){
 
 				if(fade_i) if(!fade_screen(FADE_IN)) fade_i = false;
 
-
 				if (IsKeyPressed(KEY_S)) {
 					if(sel < 2) sel++;
 					else sel = 0;
 				}
 				else if (IsKeyPressed(KEY_W)){   
-					if(sel == 0) sel = 3;
+					if(sel == 0) sel = 2;
 					else sel--;
 				}
+				switch(sel){
+					case 0:
+						DrawText(">", x_sta - 100, 300, 40, BLACK);
+						break;
+					case 1:
+						DrawText(">", x_opt - 100, 400, 40, BLACK);
+						break;
+					case 2:
+						DrawText(">", x_exi - 100, 500, 40, BLACK);
+						break;
+				}
+
 				if (IsKeyPressed(KEY_ENTER)){
 					switch(sel){
 						case 0: // start
@@ -170,7 +188,7 @@ int main(void){
 						case 2: // out
 							// printf("PRESSED OUT\n");
 							current = GAME_EXIT;
-
+							sel2 = 0;
 						break;
 						
 				
@@ -197,19 +215,58 @@ int main(void){
     			
 			case GAME_PLAYING:
 				ClearBackground(GREEN);
-				printf("ENTERED GAME_PLAYING STATE\n");
+				// printf("ENTERED GAME_PLAYING STATE\n");
 			break;
 
 			case GAME_OPTIONS:
-				ClearBackground(BLUE);
-		
+				ClearBackground(WHITE);
+				DrawText("There are no options yet, so go play the game", 0, 0, 40, BLACK);
+				if(IsKeyPressed(KEY_ENTER)) current = GAME_MENU;
+
 			
-				printf("ENTERED GAME_OPTIONS STATE\n");
+				// printf("ENTERED GAME_OPTIONS STATE\n");
 			break;
 
 			case GAME_EXIT:
-				ClearBackground(RED);
-				printf("ENTERED GAME_EXIT STATE\n");
+				const char *sure = "ARE YOU SURE?";
+				const char *no = "NO";
+				const char *yes = "YES";
+
+				int sure_wid = MeasureText(sure, MENU_FONT_SIZE);
+				int no_wid = MeasureText(no, MENU_FONT_SIZE);
+				int yes_wid = MeasureText(yes, MENU_FONT_SIZE);
+
+				int x_sure = (GetScreenWidth() - sure_wid) / 2;
+				int x_no = (GetScreenWidth() - no_wid) / 2;
+				int x_yes = (GetScreenWidth() - yes_wid) / 2;
+			       	
+				ClearBackground(WHITE);
+
+				if (IsKeyPressed(KEY_D)) {
+                                        if(sel2 < 1) sel2 ++;
+                                        else sel2 = 0;
+                                }
+                                else if (IsKeyPressed(KEY_A)){
+                                        if(sel2 == 0) sel2 = 1;
+                                        else sel2 --;
+                                }
+	
+				DrawText(sure, x_sure, 400, 40, BLACK);
+				DrawText(no, x_no + 100, 600, 40, BLACK);
+				DrawText(yes, x_yes - 100, 600, 40, BLACK);
+				
+				if(!sel2) {
+					DrawText(">", x_yes - 125, 600, 40, BLACK);
+					if(IsKeyPressed(KEY_ENTER)) {
+						running = false;	
+					}
+				}
+				else {
+					DrawText(">", x_no + 75, 600, 40, BLACK);
+					if(IsKeyPressed(KEY_ENTER)) current = GAME_MENU;
+				}
+				// ClearBackground(RED);
+				// printf("ENTERED GAME_EXIT STATE\n");
 			break;
 		}
 
