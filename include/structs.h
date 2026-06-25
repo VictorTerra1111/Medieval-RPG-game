@@ -1,0 +1,44 @@
+#ifndef STRUCTS_H
+#define STRUCTS_H
+
+typedef enum
+{
+    GAME_INTRO,
+    GAME_MENU,
+    GAME_PLAYING,
+    GAME_SAVES,
+    GAME_SAVE_ALREADY_EXIST,
+    GAME_OPTIONS,
+    GAME_EXIT
+} State;
+
+typedef enum
+{
+    SWORD_NONE,
+    SWORD_BURNT,
+    SWORD_WOODEN,
+    SWORD_METAL,
+    SWORD_FALSE_TWILIGHT,
+    SWORD_REAL_TWILIGHT
+} SwordType;
+
+typedef enum
+{
+    SHIELD_NONE,
+    SHIELD_BURNT,
+    SHIELD_WOODEN,
+    SHIELD_METAL,
+    SHIELD_LIFE
+} ShieldType;
+
+typedef enum
+{
+    JEWEL_FOREST,
+    JEWEL_TIDE,
+    JEWEL_PASSION,
+    JEWEL_WIND,
+    JEWEL_THUNDER,
+    JEWEL_COUNT
+} Jewel;
+
+#endif
