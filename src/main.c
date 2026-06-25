@@ -67,6 +67,7 @@ int main(void){
 	bool running = true;	
 	int sel2 = 0;
 	int sel = 0;
+	int sel3 = 0;
 	while (!WindowShouldClose() && running) {
         	BeginDrawing();
 		ClearBackground(BLACK);
@@ -211,7 +212,35 @@ int main(void){
                                 DrawText(save_file, x_sav, 400, 40, BLACK);
                                 DrawText(save_file, x_sav, 500, 40, BLACK);
 				DrawText(go_back, x_gob, 800, 40, BLACK);
-			break;
+			
+				if (IsKeyPressed(KEY_S)) {
+                                        if(sel3 < 3) sel3++;
+                                        else sel3 = 0;
+                                }
+                                else if (IsKeyPressed(KEY_W)){
+                                        if(sel3 == 0) sel3 = 3;
+                                        else sel3--;
+                                }
+                                switch(sel3){
+                                        case 0:
+                                                DrawText(">", x_sav - 100, 300, 40, BLACK);
+                                                break;
+                                        case 1:
+                                                DrawText(">", x_sav - 100, 400, 40, BLACK);
+                                                break;
+                                        case 2:
+                                                DrawText(">", x_sav - 100, 500, 40, BLACK);
+                                                break;
+					case 3:
+						DrawText(">", x_gob - 100, 800, 40, BLACK);
+						if(IsKeyPressed(KEY_ENTER)) {
+							sel = 0;	
+							current = GAME_MENU;
+						}
+						break;
+                                }
+
+				break;
     			
 			case GAME_PLAYING:
 				ClearBackground(GREEN);
