@@ -1,9 +1,9 @@
 #include <stdio.h>
 
 #include "raylib.h"
-
-#include "../include/screen_effects_f.h"
 #include "../include/defines.h"
+#include "../include/screen_effects_f.h"
+
 
 int fade_screen(int io)
 {

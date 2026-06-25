@@ -1,13 +1,12 @@
 #include <stdio.h>
+#include <string.h>
 
 #include "../include/save_file_f.h"
 #include "../include/structs.h"
 #include "../include/player.h"
 
-int create_save_file(int save_slot)
+int create_save_file(int save_slot, MainChar *player)
 {
-    MainChar player = {0};
-
     char filename[32];
     snprintf(filename, sizeof(filename), "save_files/save_file_%d.sav", save_slot);
 
@@ -19,15 +18,12 @@ int create_save_file(int save_slot)
         return -2; // there is another save in the slot
     }
 
-    strcpy(player.name, "Renna Legot");
-    player.life = 100;
-
     save = fopen(filename, "wb");
 
     if (save == NULL)
         return -1; // cannot create file
 
-    fwrite(&player, sizeof(MainChar), 1, save);
+    fwrite(player, sizeof(MainChar), 1, save);
 
     fclose(save);
 

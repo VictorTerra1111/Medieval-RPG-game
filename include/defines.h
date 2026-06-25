@@ -3,10 +3,10 @@
 
 #include "structs.h"
 
-State current = GAME_INTRO;
-State next_state;
+extern State current;
+extern State next_state;
 
-double fade_rate = 0.0f;
+extern double fade_rate;
 
 #define FADE_IN 0
 #define FADE_OUT 1

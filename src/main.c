@@ -9,6 +9,15 @@
 #include "../include/screen_effects_f.h"
 #include "../include/structs.h"
 
+#define FADE_IN 0
+#define FADE_OUT 1
+#define MENU_FONT_SIZE 40
+#define SCALE 4.0f
+
+double fade_rate = 0.0f;
+
+State current = GAME_INTRO;
+
 int main(void)
 {
 	SetTraceLogLevel(LOG_NONE);
@@ -64,6 +73,10 @@ int main(void)
 	int x_no = (GetScreenWidth() - no_wid) / 2;
 	int x_yes = (GetScreenWidth() - yes_wid) / 2;
 
+	MainChar p1;
+
+	snprintf(p1.name, sizeof(p1.name), "%s", "Renna legot");
+	
 	while (!WindowShouldClose() && running)
 	{ // current state of the game looping
 		BeginDrawing();
@@ -158,21 +171,22 @@ int main(void)
 
 			if (save_exists(1))
 			{
-				MainChar p = load_save_file(1);
-				snprintf(slot1_text, sizeof(slot1_text), "%s", p.name);
+				p1 = load_save_file(1);
+				snprintf(slot1_text, sizeof(slot1_text), "%s", p1.name);
 			}
-
 			if (save_exists(2))
 			{
-				MainChar p = load_save_file(2);
-				snprintf(slot2_text, sizeof(slot2_text), "%s", p.name);
+				p1 = load_save_file(2);
+				snprintf(slot2_text, sizeof(slot2_text), "%s", p1.name);
 			}
 
 			if (save_exists(3))
 			{
-				MainChar p = load_save_file(3);
-				snprintf(slot3_text, sizeof(slot3_text), "%s", p.name);
+				p1 = load_save_file(3);
+				snprintf(slot3_text, sizeof(slot3_text), "%s", p1.name);
 			}
+
+
 			int wid1 = MeasureText(slot1_text, MENU_FONT_SIZE);
 			int wid2 = MeasureText(slot2_text, MENU_FONT_SIZE);
 			int wid3 = MeasureText(slot3_text, MENU_FONT_SIZE);
@@ -207,7 +221,7 @@ int main(void)
 				if (IsKeyPressed(KEY_ENTER))
 				{
 					sel_slot = 1;
-					if (create_save_file(1) == -2)
+					if (create_save_file(1, &p1) == -2)
 						current = GAME_PLAYING;
 				}
 				else if (IsKeyPressed(KEY_DELETE))
@@ -222,7 +236,7 @@ int main(void)
 				if (IsKeyPressed(KEY_ENTER))
 				{
 					sel_slot = 2;
-					if (create_save_file(2) == -2)
+					if (create_save_file(2, &p1) == -2)
 						current = GAME_PLAYING;
 				}
 				else if (IsKeyPressed(KEY_DELETE))
@@ -238,7 +252,7 @@ int main(void)
 				if (IsKeyPressed(KEY_ENTER))
 				{
 					sel_slot = 3;
-					if (create_save_file(3) == -2)
+					if (create_save_file(3, &p1) == -2)
 						current = GAME_PLAYING;
 				}
 				else if (IsKeyPressed(KEY_DELETE))

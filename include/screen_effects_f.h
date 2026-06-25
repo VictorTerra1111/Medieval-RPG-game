@@ -2,6 +2,7 @@
 #define SCREEN_EFFECTS_H
 
 #include "raylib.h"
+#include "defines.h"
 
 int fade_screen(int io);
 

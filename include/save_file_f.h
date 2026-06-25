@@ -3,7 +3,7 @@
 
 #include "player.h"
 
-int create_save_file(int save_slot);
+int create_save_file(int save_slot, MainChar *player);
 
 int delete_save_file(int save_slot);
 
