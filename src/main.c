@@ -11,37 +11,78 @@ typedef enum {
 } State;
 
 State current = GAME_INTRO;
+State next_state;
 
+double fade_rate = 0.0f;
+
+#define FADE_IN 0
+#define FADE_OUT 1
 #define MENU_FONT_SIZE 40
+#define SCALE 4.0f
+
+int fade_screen(int io){
+	
+	if(io == FADE_IN){
+
+		fade_rate -= 200 * GetFrameTime();
+		if (fade_rate <= 0){
+			fade_rate = 0;
+			return 0; // OVER
+		}	
+	}
+
+	else{
+		fade_rate += 200 * GetFrameTime();
+
+                if (fade_rate >= 255){
+			fade_rate = 255;
+			DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(),Fade(BLACK, fade_rate / 255.0f) );
+			return 0; // OVER
+		}
+	}
+	DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(),Fade(BLACK, fade_rate / 255.0f) );
+	return 1; // NOT YET FINISHED
+}
+
 
 int main(void){
+
 	SetTraceLogLevel(LOG_NONE);
 	InitWindow(500, 500, "Corpsia");
 
 	Texture2D logo = LoadTexture("assets/sprites/corpsia_logo_black.png");
+	Texture2D background_intro = LoadTexture("assets/sprites/Background_intro.png");
+
+	Texture2D b_menu1 = LoadTexture("assets/sprites/background_menu_pic1.png");
+	Texture2D b_menu2 = LoadTexture("assets/sprites/background_menu_pic2.png");
+        Texture2D b_menu3 = LoadTexture("assets/sprites/background_menu_pic3.png");
 
 	ToggleFullscreen();
 	SetTargetFPS(60);
 	int sel = 0;
+	bool fade_o = false;
+	bool fade_i = true;
+	double wall_changing = 0.0f;
+        int wall_turn = 1;
 
 	while (!WindowShouldClose()) {
         	BeginDrawing();
-        	switch (current) { // current state of the game looping
+		ClearBackground(BLACK);
+		
+		switch (current) { // current state of the game looping
 			case GAME_INTRO: // intro screen with logo and enter only
-				printf("ENTERED GAME_INTRO STATE\n");
-				ClearBackground(RAYWHITE);
-
-        		        double scale = 4.0f;
-	
+				// printf("ENTERED GAME_INTRO STATE\n");
 
 				//calculate logo position
-                		int width = logo.width * scale; 
-                		int height = logo.height * scale;
+                		int width = logo.width * SCALE; 
+                		int height = logo.height * SCALE;
 
                 		int x = (GetScreenWidth() - width) / 2;
                 		int y = (GetScreenHeight() - height) / 2;
 		
-                		DrawTextureEx(logo, (Vector2){x, y}, 0, scale, WHITE);
+				DrawTexture(background_intro, 0, 0, WHITE);
+
+                		DrawTextureEx(logo, (Vector2){x, y}, 0, SCALE, WHITE);
 				
 				const char *start = "START";
 				
@@ -49,13 +90,24 @@ int main(void){
 				int x_text = (GetScreenWidth() - t_wid) / 2;
 				
 				DrawText(start, x_text, 960, 40, BLACK);
-				if (IsKeyPressed(KEY_ENTER)) current = GAME_MENU; // goes to the next screen MENU
-			break;
+	
+				if (IsKeyPressed(KEY_ENTER)) {	
+					fade_o = true;
+
+				}	
+				if(fade_o){
+					if(!fade_screen(FADE_OUT)) 
+					{
+						current = GAME_MENU;
+						fade_o = false;
+						fade_i = true;
+						fade_rate = 255;
+						// printf("\n\nDEBUG game state during fade: GAME_MENU\n\n");
+					}
+				}
+				break;
 
     			case GAME_MENU:
-				ClearBackground(YELLOW);
-				printf("ENTERED GAME_MENU STATE\n");
-				
 				const char *start_op = "SAVE FILES";
 				const char *options_op = "OPTIONS";
 				const char *exit_op = "EXIT";
@@ -68,9 +120,32 @@ int main(void){
                                 int x_opt = (GetScreenWidth() - opt_wid) / 2;
                                 int x_exi = (GetScreenWidth() - exi_wid) / 2;
 
-                                DrawText(start_op, x_sta, 300, 40, BLACK);
+						
+				wall_changing += GetFrameTime();
+				
+				if(wall_changing >= 3.0f){
+					wall_changing = 0.0f;
+
+					if(wall_turn == 3){
+						wall_turn = 1;
+					}
+					else wall_turn++;
+				}
+
+				switch (wall_turn){
+					case 1: DrawTexture(b_menu1, 0, 0, WHITE); break;
+					case 2: DrawTexture(b_menu2, 0, 0, WHITE); break;
+					case 3: DrawTexture(b_menu3, 0, 0, WHITE); break;
+				}
+                                
+				DrawText(start_op, x_sta, 300, 40, BLACK);
                                 DrawText(options_op, x_opt, 400, 40, BLACK);
                                 DrawText(exit_op, x_exi, 500, 40, BLACK);
+
+				// printf("FADE RATE: %.2f\n", fade_rate);
+
+				if(fade_i) if(!fade_screen(FADE_IN)) fade_i = false;
+
 
 				if (IsKeyPressed(KEY_S)) {
 					if(sel < 2) sel++;
@@ -83,17 +158,17 @@ int main(void){
 				if (IsKeyPressed(KEY_ENTER)){
 					switch(sel){
 						case 0: // start
-							printf("PRESSED START\n");
+							// printf("PRESSED START\n");
 							current = GAME_SAVES;
 						break;
 
 						case 1: // options
-							printf("PRESSED OPTIONS\n");
+							// printf("PRESSED OPTIONS\n");
 							current = GAME_OPTIONS;
 						break;
 
 						case 2: // out
-							printf("PRESSED OUT\n");
+							// printf("PRESSED OUT\n");
 							current = GAME_EXIT;
 
 						break;
@@ -102,6 +177,7 @@ int main(void){
 					}
 				}
 			break;
+
 			case GAME_SAVES:
 				ClearBackground(PURPLE);
 				const char *save_file = "EMPTY SLOT";
