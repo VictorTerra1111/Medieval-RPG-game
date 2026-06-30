@@ -29,6 +29,8 @@ int main(void)
 	Texture2D logo2 = LoadTexture("assets/sprites/corpsia_logo_white.png");
 	Texture2D background_intro = LoadTexture("assets/sprites/Background_intro.png");
 
+	Texture2D player_sheet = LoadTexture("assets/sprites/player.png");
+
 	Texture2D b_menu1 = LoadTexture("assets/sprites/background_menu_pic1.png");
 	Texture2D b_menu2 = LoadTexture("assets/sprites/background_menu_pic2.png");
 	Texture2D b_menu3 = LoadTexture("assets/sprites/background_menu_pic3.png");
@@ -76,6 +78,19 @@ int main(void)
 	MainChar p1;
 
 	char player_name[32] = "";
+
+	p1.x = 500;
+	p1.y = 500;
+
+	Camera2D camera = {0};
+
+camera.offset = (Vector2){
+    GetScreenWidth()/2,
+    GetScreenHeight()/2
+};
+
+camera.rotation = 0;
+camera.zoom = 1.0f;
 
 	while (!WindowShouldClose() && running)
 	{ // current state of the game looping
@@ -172,24 +187,7 @@ int main(void)
 		case GAME_SAVES:
 			
 			ClearBackground(WHITE);
-/*
- 			if (save_exists(1))
-			{
-				p1 = load_save_file(1);
-				snprintf(slot1_text, sizeof(slot1_text), "%s", p1.name);
-			}
-			if (save_exists(2))
-			{
-				p1 = load_save_file(2);
-				snprintf(slot2_text, sizeof(slot2_text), "%s", p1.name);
-			}
 
-			if (save_exists(3))
-			{
-				p1 = load_save_file(3);
-				snprintf(slot3_text, sizeof(slot3_text), "%s", p1.name);
-			}
-		*/
 			if (save_exists(1)){
 			    p1 = load_save_file(1);
 		//		printf("Nome carregado: '%s'\n", p1.name);
@@ -461,8 +459,41 @@ int main(void)
 			break;
 
 		case GAME_PLAYING:
-    		ClearBackground(DARKGREEN);
-    		DrawText("GAME STARTED", 50, 50, 40, WHITE);
+    			ClearBackground(BLACK);
+    		        BeginMode2D(camera);
+			camera.target = (Vector2){p1.x, p1.y};
+
+			double speed = 250.0f * GetFrameTime();
+
+
+			if (p1.x < 16)
+                                p1.x = 16;
+
+                        if (p1.x > 2000 - 16)
+                                p1.x = 2000 - 16;
+
+                        if (p1.y < 16)
+                                p1.y = 16;
+
+                        if (p1.y > 1200 - 16)
+                                p1.y = 1200 - 16;
+
+
+			if (IsKeyDown(KEY_W))
+    				p1.y -= speed;
+
+			if (IsKeyDown(KEY_S))
+    				p1.y += speed;
+
+			if (IsKeyDown(KEY_A))
+    				p1.x -= speed;
+
+			if (IsKeyDown(KEY_D))
+    				p1.x += speed;
+
+			DrawRectangle(0, 0, 2000, 1200, DARKGREEN);
+			DrawRectangle(p1.x - 16, p1.y - 16, 32, 32, RED);
+			EndMode2D();
 			break;
 		}
 		EndDrawing();

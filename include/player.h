@@ -10,6 +10,10 @@ typedef struct
 {
 	char name[32];
 
+
+	double x;
+	double y;
+
 	int life;
 	int mana;
 	int arrows; // how many arrows, -1 if no bow
@@ -30,5 +34,7 @@ typedef struct
 int naming_character(char name[32]);
 
 void name_confirming(char name[32], int name_wid, int x_name);
+
+
 
 #endif
