@@ -75,8 +75,8 @@ int main(void)
 
 	MainChar p1;
 
-	snprintf(p1.name, sizeof(p1.name), "%s", "Renna legot");
-	
+	char player_name[32] = "";
+
 	while (!WindowShouldClose() && running)
 	{ // current state of the game looping
 		BeginDrawing();
@@ -151,14 +151,17 @@ int main(void)
 				switch (sel)
 				{
 				case 0: // start
+					sel = 0;
 					current = GAME_SAVES;
 					break;
 
 				case 1: // options
+					sel = 0;
 					current = GAME_OPTIONS;
 					break;
 
 				case 2: // out
+					sel = 0;
 					current = GAME_EXIT;
 					sel2 = 0;
 					break;
@@ -314,10 +317,6 @@ int main(void)
 
 			break;
 
-		case GAME_PLAYING:
-			ClearBackground(BLACK);
-			break;
-
 		case GAME_OPTIONS:
 			ClearBackground(WHITE);
 			DrawText("There are no options yet, so go play the game", 0, 0, 40, BLACK);
@@ -361,8 +360,13 @@ int main(void)
 					current = GAME_MENU;
 			}
 			break;
-		}
 
+		case GAME_PLAYING:
+			if (naming_character(player_name))
+    				strcpy(p1.name, player_name);	
+			
+			break;
+		}
 		EndDrawing();
 	}
 

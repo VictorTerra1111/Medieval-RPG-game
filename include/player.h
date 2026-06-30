@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include "structs.h"
 #include <string.h>
+#include "defines.h"
 
 typedef struct
 {
@@ -25,5 +26,7 @@ typedef struct
 	bool can_teleport;
 
 } MainChar;
+
+int naming_character(char name[32]);
 
 #endif
