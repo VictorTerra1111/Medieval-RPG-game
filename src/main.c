@@ -38,8 +38,7 @@ int main(void)
 	bool fade_o = false, fade_i = true, running = true;
 
 	double wall_changing = 0.0f;
-	int wall_turn = 1, sel2 = 0, sel = 0, sel3 = 0, sel_slot = 1;
-
+	int wall_turn = 1, sel2 = 0, sel = 0, sel3 = 0, sel_slot = 1, sel_pause = 0;
 	const char *sure = "ARE YOU SURE?";
 	const char *no = "NO";
 	const char *yes = "YES";
@@ -74,6 +73,8 @@ int main(void)
 	int x_sure = (GetScreenWidth() - sure_wid) / 2;
 	int x_no = (GetScreenWidth() - no_wid) / 2;
 	int x_yes = (GetScreenWidth() - yes_wid) / 2;
+
+	bool pause = false; 
 
 	MainChar p1;
 
@@ -191,6 +192,7 @@ camera.zoom = 1.0f;
 			if (save_exists(1)){
 			    p1 = load_save_file(1);
 		//		printf("Nome carregado: '%s'\n", p1.name);
+			 	// printf("DEPOIS DE CARREGAR: x = %.2lf, y = %.2lf\n", p1.x, p1.y);
 			    if (p1.name[0] == '\0')
 			        strcpy(slot1_text, "EMPTY SLOT");
 			    else
@@ -491,9 +493,81 @@ camera.zoom = 1.0f;
 			if (IsKeyDown(KEY_D))
     				p1.x += speed;
 
+			if(IsKeyPressed(KEY_C)){
+				pause = !pause;
+				current = GAME_PAUSE; 
+				sel_pause = 0;
+			}
+			
 			DrawRectangle(0, 0, 2000, 1200, DARKGREEN);
 			DrawRectangle(p1.x - 16, p1.y - 16, 32, 32, RED);
 			EndMode2D();
+			break;
+
+		case GAME_PAUSE:
+			if (pause){
+    				DrawRectangle( 0, 0, GetScreenWidth(), GetScreenHeight(), Fade(BLACK, 0.5f));
+
+				DrawText("PAUSED", 800, 300, 60, WHITE);
+    				DrawText("Resume", 820, 450, 40, WHITE);
+    				DrawText("Save", 820, 520, 40, WHITE);
+    				DrawText("Quit", 820, 590, 40, WHITE);
+			}
+			
+			if (IsKeyPressed(KEY_S))
+        		{
+                		if (sel_pause < 2)
+                        		sel_pause++;
+                		else
+                        		sel_pause = 0;
+        		}
+        		
+			else if (IsKeyPressed(KEY_W))
+        		{
+                		if (sel_pause > 0)
+                        		sel_pause--;
+                		else
+                        		sel_pause = 2;
+			}
+
+			switch (sel_pause)
+        		{
+        			case 0:
+                			DrawText(">", 780, 450, 40, WHITE);
+
+                	if (IsKeyPressed(KEY_ENTER))
+                	{
+                        	pause = false; // resume
+                        	current = GAME_PLAYING;
+                	}
+
+                break;
+
+        case 1:
+                DrawText(">", 780, 520, 40, WHITE);
+
+                if (IsKeyPressed(KEY_ENTER))
+                {
+                        // save game
+			//printf("ANTES DE SALVAR: x = %.2lf, y = %.2lf\n", p1.x, p1.y);
+
+			save_game(&p1, sel_slot);
+                }
+                break;
+
+        case 2:
+                DrawText(">", 780, 590, 40, WHITE);
+
+                if (IsKeyPressed(KEY_ENTER))
+                { // save and quit
+                        pause = false;
+			save_game(&p1, sel_slot);
+                        current = GAME_MENU;
+                }
+                break;
+        }
+			
+
 			break;
 		}
 		EndDrawing();

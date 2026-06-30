@@ -52,7 +52,7 @@ int save_game(MainChar *player, int save_slot)
 {
     char filename[64];
 
-    snprintf(filename, sizeof(filename), "saves_files/save_file_%d.sav", save_slot);
+    snprintf(filename, sizeof(filename), "save_files/save_file_%d.sav", save_slot);
 
     FILE *save = fopen(filename, "wb");
 

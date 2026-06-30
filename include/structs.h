@@ -11,7 +11,8 @@ typedef enum
     GAME_OPTIONS,
     GAME_EXIT,
     GAME_NAMING,
-    GAME_NAMING_CONFIRM
+    GAME_NAMING_CONFIRM,
+    GAME_PAUSE
 } State;
 
 typedef enum
