@@ -81,7 +81,7 @@ int main(void)
 	{ // current state of the game looping
 		BeginDrawing();
 		ClearBackground(BLACK);
-
+		
 		switch (current)
 		{
 		case GAME_INTRO: // intro screen with logo and enter only
@@ -170,9 +170,10 @@ int main(void)
 			break;
 
 		case GAME_SAVES:
+			
 			ClearBackground(WHITE);
 /*
-			if (save_exists(1))
+ 			if (save_exists(1))
 			{
 				p1 = load_save_file(1);
 				snprintf(slot1_text, sizeof(slot1_text), "%s", p1.name);
@@ -191,7 +192,7 @@ int main(void)
 		*/
 			if (save_exists(1)){
 			    p1 = load_save_file(1);
-			
+		//		printf("Nome carregado: '%s'\n", p1.name);
 			    if (p1.name[0] == '\0')
 			        strcpy(slot1_text, "EMPTY SLOT");
 			    else
@@ -203,7 +204,7 @@ int main(void)
 			
 			if (save_exists(2)) {
 			    p1 = load_save_file(2);
-			
+		//	printf("Nome carregado: '%s'\n", p1.name);
 			    if (p1.name[0] == '\0')
 			        strcpy(slot2_text, "EMPTY SLOT");
 			    else
@@ -218,7 +219,7 @@ int main(void)
 			if (save_exists(3))
 			{
 			    p1 = load_save_file(3);
-			
+		//	printf("Nome carregado: '%s'\n", p1.name);
 			    if (p1.name[0] == '\0')
 			        strcpy(slot3_text, "EMPTY SLOT");
 			    else
@@ -348,16 +349,29 @@ int main(void)
 			break;
 
 		case GAME_NAMING:
-			ClearBackground(WHITE);
+			if (naming_character(player_name))
+			    {
+        			current = GAME_NAMING_CONFIRM;
+    			}
 
-		    if (naming_character(player_name))
-		    {
-		        strcpy(p1.name, player_name);
-		
-		        create_save_file(sel_slot, &p1);
-		
-		        current = GAME_PLAYING;
-		    }
+			break;
+		case GAME_NAMING_CONFIRM:
+			
+			 name_confirming(player_name, 0, 0);
+
+    			if (IsKeyPressed(KEY_ENTER)){
+        			strcpy(p1.name, player_name);
+
+			        create_save_file(sel_slot, &p1);
+
+        			current = GAME_PLAYING;
+   			 }
+    			else if (IsKeyPressed(KEY_ESCAPE))
+    			{
+        			player_name[0] = '\0';
+        			current = GAME_NAMING;
+    			}
+			
 			break;
 		case GAME_SAVE_ALREADY_EXIST:
 			ClearBackground(WHITE);

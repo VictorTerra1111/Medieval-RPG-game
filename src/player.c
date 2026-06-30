@@ -4,7 +4,28 @@
 #include "../include/player.h"
 #include "raylib.h"
 
-int name_confirming(char name[32], int name_wid, int x_name);
+void name_confirming(char name[32], int name_wid, int x_name)
+{
+    const char *cor = "Your name shall be";
+    const char *confirm = "Press ENTER to confirm";
+
+    int cor_wid = MeasureText(cor, MENU_FONT_SIZE);
+    int conf_wid = MeasureText(confirm, 30);
+
+    int x_cor = (GetScreenWidth() - cor_wid) / 2;
+    int x_conf = (GetScreenWidth() - conf_wid) / 2;
+
+    ClearBackground(WHITE);
+
+    DrawText(cor, x_cor, 300, 40, BLACK);
+
+    name_wid = MeasureText(name, 80);
+    x_name = (GetScreenWidth() - name_wid) / 2;
+
+    DrawText(name, x_name, 500, 80, BLACK);
+
+    DrawText(confirm, x_conf, 700, 30, DARKGRAY);
+}
 
 int naming_character(char name[32])
 {
@@ -12,7 +33,7 @@ int naming_character(char name[32])
 
     const char *default_name = "Renna Legot";
     const char *q = "Choose your name";
-    
+
     int q_wid = MeasureText(q, MENU_FONT_SIZE);
     int x_q = (GetScreenWidth() - q_wid) / 2;
 
@@ -22,8 +43,10 @@ int naming_character(char name[32])
 
     int l = GetCharPressed();
 
-    while (l > 0) {
-	    if ((l >= 32) && (l <= 125) && (size < 31)){
+    while (l > 0)
+    {
+        if ((l >= 32) && (l <= 125) && (size < 31))
+        {
             name[size] = (char)l;
             size++;
             name[size] = '\0';
@@ -41,7 +64,7 @@ int naming_character(char name[32])
         }
     }
 
-    const char *shown_name = (name[0] == '\0') ? default_name : name;
+    const char *shown_name = (size == 0) ? default_name : name;
 
     int name_wid = MeasureText(shown_name, 80);
     int x_name = (GetScreenWidth() - name_wid) / 2;
@@ -50,33 +73,14 @@ int naming_character(char name[32])
 
     if (IsKeyPressed(KEY_ENTER))
     {
-        if (name[0] == '\0')
+        if (size == 0)
         {
             strcpy(name, default_name);
         }
+
         size = 0;
-	
- 	return name_confirming(name, name_wid, x_name);
+        return 1;
     }
 
     return 0;
-}
-
-
-int name_confirming(char name[32], int name_wid, int x_name){
-	const char *cor = "Your name shall be";
-	int cor_wid = MeasureText(cor, MENU_FONT_SIZE);
-	int x_cor = (GetScreenWidth() - cor_wid) / 2;
-
-	ClearBackground(WHITE);
-
-        DrawText(cor, x_cor, 300, 40, BLACK);
-
-        name_wid = MeasureText(name, 80);
-        x_name = (GetScreenWidth() - name_wid) / 2;
-
-        DrawText(name, x_name, 500, 80, BLACK);
-
-        return 1;
-
 }

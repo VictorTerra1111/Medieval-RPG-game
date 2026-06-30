@@ -29,4 +29,6 @@ typedef struct
 
 int naming_character(char name[32]);
 
+void name_confirming(char name[32], int name_wid, int x_name);
+
 #endif

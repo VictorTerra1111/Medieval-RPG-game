@@ -10,7 +10,8 @@ typedef enum
     GAME_SAVE_ALREADY_EXIST,
     GAME_OPTIONS,
     GAME_EXIT,
-    GAME_NAMING
+    GAME_NAMING,
+    GAME_NAMING_CONFIRM
 } State;
 
 typedef enum
