@@ -171,7 +171,7 @@ int main(void)
 
 		case GAME_SAVES:
 			ClearBackground(WHITE);
-
+/*
 			if (save_exists(1))
 			{
 				p1 = load_save_file(1);
@@ -188,7 +188,46 @@ int main(void)
 				p1 = load_save_file(3);
 				snprintf(slot3_text, sizeof(slot3_text), "%s", p1.name);
 			}
+		*/
+			if (save_exists(1)){
+			    p1 = load_save_file(1);
+			
+			    if (p1.name[0] == '\0')
+			        strcpy(slot1_text, "EMPTY SLOT");
+			    else
+			        strcpy(slot1_text, p1.name);
+			}
+			else {
+			    strcpy(slot1_text, "EMPTY SLOT");
+			}
+			
+			if (save_exists(2)) {
+			    p1 = load_save_file(2);
+			
+			    if (p1.name[0] == '\0')
+			        strcpy(slot2_text, "EMPTY SLOT");
+			    else
+			        strcpy(slot2_text, p1.name);
+			}
+			else
+			{
+			    strcpy(slot2_text, "EMPTY SLOT");
+			}
 
+			
+			if (save_exists(3))
+			{
+			    p1 = load_save_file(3);
+			
+			    if (p1.name[0] == '\0')
+			        strcpy(slot3_text, "EMPTY SLOT");
+			    else
+			        strcpy(slot3_text, p1.name);
+			}
+			else
+			{
+			    strcpy(slot3_text, "EMPTY SLOT");
+			}
 
 			int wid1 = MeasureText(slot1_text, MENU_FONT_SIZE);
 			int wid2 = MeasureText(slot2_text, MENU_FONT_SIZE);
@@ -223,9 +262,19 @@ int main(void)
 
 				if (IsKeyPressed(KEY_ENTER))
 				{
-					sel_slot = 1;
-					if (create_save_file(1, &p1) == -2)
-						current = GAME_PLAYING;
+				    sel_slot = 1;
+				
+				    if (save_exists(1))
+				    {
+				        p1 = load_save_file(1);
+				        current = GAME_PLAYING;
+				    }
+				    else
+				    {
+				        memset(&p1, 0, sizeof(MainChar));
+				        player_name[0] = '\0';
+				        current = GAME_NAMING;
+				    }
 				}
 				else if (IsKeyPressed(KEY_DELETE))
 				{
@@ -238,9 +287,19 @@ int main(void)
 				DrawText(">", x_s2 - 100, 400, 40, BLACK);
 				if (IsKeyPressed(KEY_ENTER))
 				{
-					sel_slot = 2;
-					if (create_save_file(2, &p1) == -2)
-						current = GAME_PLAYING;
+				    sel_slot = 2;
+				
+				    if (save_exists(2))
+				    {
+				        p1 = load_save_file(2);
+				        current = GAME_PLAYING;
+				    }
+				    else
+				    {
+				        memset(&p1, 0, sizeof(MainChar));
+				        player_name[0] = '\0';
+				        current = GAME_NAMING;
+				    }
 				}
 				else if (IsKeyPressed(KEY_DELETE))
 				{
@@ -254,9 +313,19 @@ int main(void)
 				DrawText(">", x_s3 - 100, 500, 40, BLACK);
 				if (IsKeyPressed(KEY_ENTER))
 				{
-					sel_slot = 3;
-					if (create_save_file(3, &p1) == -2)
-						current = GAME_PLAYING;
+				    sel_slot = 3;
+				
+				    if (save_exists(3))
+				    {
+				        p1 = load_save_file(3);
+				        current = GAME_PLAYING;
+				    }
+				    else
+				    {
+				        memset(&p1, 0, sizeof(MainChar));
+				        player_name[0] = '\0';
+				        current = GAME_NAMING;
+				    }
 				}
 				else if (IsKeyPressed(KEY_DELETE))
 				{
@@ -278,6 +347,18 @@ int main(void)
 
 			break;
 
+		case GAME_NAMING:
+			ClearBackground(WHITE);
+
+		    if (naming_character(player_name))
+		    {
+		        strcpy(p1.name, player_name);
+		
+		        create_save_file(sel_slot, &p1);
+		
+		        current = GAME_PLAYING;
+		    }
+			break;
 		case GAME_SAVE_ALREADY_EXIST:
 			ClearBackground(WHITE);
 
@@ -306,13 +387,17 @@ int main(void)
 				if (IsKeyPressed(KEY_ENTER))
 				{
 					delete_save_file(sel_slot);
+					current = GAME_SAVES;
+					sel2 = 0;
 				}
 			}
 			else
 			{
 				DrawText(">", x_no + 75, 600, 40, BLACK);
-				if (IsKeyPressed(KEY_ENTER))
+				if (IsKeyPressed(KEY_ENTER)){
 					current = GAME_SAVES;
+					sel2 = 0;
+				}
 			}
 
 			break;
@@ -362,9 +447,8 @@ int main(void)
 			break;
 
 		case GAME_PLAYING:
-			if (naming_character(player_name))
-    				strcpy(p1.name, player_name);	
-			
+    		ClearBackground(DARKGREEN);
+    		DrawText("GAME STARTED", 50, 50, 40, WHITE);
 			break;
 		}
 		EndDrawing();
